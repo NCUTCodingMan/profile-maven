@@ -21,9 +21,9 @@ public DataSource dataSource() {
 }
 ```
 #### 几个关键点
-- profiles
+- profiles<br>
   上述已举案例, 需要注意的是里面声明的<properties>...往往是一个自定义变量, 根据Maven传输的命令不同, 采用不同的profile
-- filters
+- filters<br>
   过滤器, 设置采用了变量值的文件位置信息, 并且profile中定义的变量将会取代resources中使用了自定义变量的位置(filtering = true)
-- resources
+- resources<br>
   资源
