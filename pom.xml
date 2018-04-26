@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.rain</groupId>
+    <artifactId>profile-maven</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>war</packaging>
+
+    <name>profile-maven Maven</name>
+    <url>http://www.example.com</url>
+
+    <!-- 属性定义, 通过properties属性, 用户可以定义一个或者多个Maven属性, 然后在POM其他地方使用${属性名}访问 -->
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.7</maven.compiler.source>
+        <maven.compiler.target>1.7</maven.compiler.target>
+        <springframework.version>4.3.4.RELEASE</springframework.version>
+    </properties>
+
+    <!--
+        设置不同的profile, profile的激活方式有多种
+        1.命令行 -P...
+        2.<settings><activeProfiles><activeProfile>dev-x</activeProfile></activeProfiles></settings>
+        3.默认激活
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+    -->
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <properties>
+                <profile.active>dev</profile.active>
+            </properties>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+
+        <profile>
+            <id>beta</id>
+            <properties>
+                <profile.active>beta</profile.active>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>prod</id>
+            <properties>
+                <profile.active>prod</profile.active>
+            </properties>
+        </profile>
+    </profiles>
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.11</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>${springframework.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+            <version>${springframework.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>${springframework.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>${springframework.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+            <version>${springframework.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>${springframework.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.8</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>profile-maven</finalName>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.7.0</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+        <filters>
+            <!--
+                设置变量配置文件的地址信息, 即文件的位置信息.
+                文件的位置信息使用profile定义的属性信息, 及profile.active
+            -->
+            <filter>src/main/resources/${profile.active}/jdbc-${profile.active}.properties</filter>
+        </filters>
+
+        <resources>
+            <!-- 资源过滤, 使得POM文件中声明的变量在其他文件中生效 -->
+            <resource>
+                <directory>src/main/resources</directory>
+                <!--
+                    下面资源中的变量将会替换成profile.active的具体值, 例如application.xml中的
+                    设置的数据库文件配置信息
+                    classpath:${profile.active}/jdbc-${profile.active}.properties
+
+                    数据库配置文件中的属性信息
+                    ${driverClassName}
+                -->
+                <filtering>true</filtering>
+                <includes>
+                    <include>*.xml</include>
+                    <include>${profile.active}/</include>
+                </includes>
+            </resource>
+        </resources>
+    </build>
+</project>
